@@ -56,17 +56,17 @@ function displayStoryWithInputs(story) {
         return;
     }
 
-    let formHtml = story;
+    let modifiedStory = story;
 
     placeholders.forEach((placeholder, index) => {
         let wordType = placeholder.replace(/\[|\]/g, ''); // Remove brackets
         let inputField = `<input type="text" class="user-word" data-placeholder="${placeholder}" placeholder="${wordType}" required>`;
-        formHtml = formHtml.replace(placeholder, inputField);
+        modifiedStory = modifiedStory.replace(placeholder, inputField);
     });
 
     document.getElementById("output").innerHTML = `
         <p>Fill in the blanks:</p>
-        <div id="story-form">${formHtml}</div>
+        <div id="story-form">${modifiedStory}</div>
         <button onclick="finalizeStory()">Submit Words</button>
     `;
     document.getElementById("output").dataset.story = story;
