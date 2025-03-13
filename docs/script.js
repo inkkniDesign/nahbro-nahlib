@@ -1,12 +1,13 @@
-document.getElementById("generate").addEventListener("click", async function() {
+document.getElementById("generate").addEventListener("click", async function () {
     let scenario = document.getElementById("scenario").value;
     let category = document.getElementById("category").value;
-    
+
+    // Validate input: scenario or category must be provided
     let requestData = {};
-    if (scenario) {
-        requestData.scenario = scenario;
-    } else if (category) {
-        requestData.category = category;
+    if (scenario.trim()) {
+        requestData.scenario = scenario.trim();
+    } else if (category.trim()) {
+        requestData.category = category.trim();
     } else {
         alert("Please enter a scenario or select a category.");
         return;
@@ -20,17 +21,16 @@ document.getElementById("generate").addEventListener("click", async function() {
 
     let result = await response.json();
     if (result.story) {
-        document.getElementById("output").innerText = result.story;
-        document.getElementById("share-buttons").classList.remove("hidden");
+        displayStoryWithInputs(result.story);
         document.getElementById("regenerate").classList.remove("hidden");
     } else {
         document.getElementById("output").innerText = "Something went wrong. Try again!";
     }
 });
 
-document.getElementById("regenerate").addEventListener("click", async function() {
+document.getElementById("regenerate").addEventListener("click", async function () {
     let category = document.getElementById("category").value;
-    if (!category) {
+    if (!category.trim()) {
         alert("Regeneration only works for category-based stories.");
         return;
     }
@@ -43,11 +43,49 @@ document.getElementById("regenerate").addEventListener("click", async function()
 
     let result = await response.json();
     if (result.story) {
-        document.getElementById("output").innerText = result.story;
+        displayStoryWithInputs(result.story);
     }
 });
 
-// Social sharing
+function displayStoryWithInputs(story) {
+    let placeholders = story.match(/\[(.*?)\]/g) || []; // Extract placeholders like [Noun], [Verb]
+
+    // If no placeholders are found, show the story as-is
+    if (placeholders.length === 0) {
+        document.getElementById("output").innerHTML = `<p>${story}</p>`;
+        return;
+    }
+
+    let formHtml = story;
+
+    placeholders.forEach((placeholder, index) => {
+        let wordType = placeholder.replace(/\[|\]/g, ''); // Remove brackets
+        let inputField = `<input type="text" class="user-word" data-placeholder="${placeholder}" placeholder="${wordType}" required>`;
+        formHtml = formHtml.replace(placeholder, inputField);
+    });
+
+    document.getElementById("output").innerHTML = `
+        <p>Fill in the blanks:</p>
+        <div id="story-form">${formHtml}</div>
+        <button onclick="finalizeStory()">Submit Words</button>
+    `;
+    document.getElementById("output").dataset.story = story;
+}
+
+function finalizeStory() {
+    let inputs = document.querySelectorAll("#story-form input");
+    let finalStory = document.getElementById("output").dataset.story;
+
+    inputs.forEach(input => {
+        let userWord = input.value.trim() || input.placeholder;
+        finalStory = finalStory.replace(input.outerHTML, `<strong>${userWord}</strong>`);
+    });
+
+    document.getElementById("output").innerHTML = `<p>${finalStory}</p>`;
+    document.getElementById("share-buttons").classList.remove("hidden");
+}
+
+// Social Sharing
 function shareStory(platform) {
     let story = document.getElementById("output").innerText;
     let url = "https://nahbro.xyz";
