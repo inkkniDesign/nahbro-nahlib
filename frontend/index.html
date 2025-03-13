@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nah Bro AI-Lib</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 Nah Bro AI-Lib</h1>
+        <p>Fill in the blanks, and let AI create the ultimate Nah Bro story.</p>
+        
+        <label for="scenario">Enter Your Scenario (Optional):</label>
+        <input type="text" id="scenario" placeholder="Or choose a category below...">
+        
+        <label for="category">Or Select a Category:</label>
+        <select id="category">
+            <option value="">-- Choose One --</option>
+            <option value="nightlife">Nightlife</option>
+            <option value="sports">Sports</option>
+            <option value="coffee_shop">Coffee Shop</option>
+            <option value="work_drama">Work Drama</option>
+        </select>
+
+        <button id="generate">Generate Nah Bro Story</button>
+        <button id="regenerate" class="hidden">Regenerate Story</button>
+
+        <div id="output" class="output"></div>
+        
+        <div id="share-buttons" class="hidden">
+            <button onclick="shareStory('twitter')">🐦 Share on Twitter</button>
+            <button onclick="shareStory('facebook')">📘 Share on Facebook</button>
+            <button onclick="copyToClipboard()">📋 Copy to Clipboard</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
