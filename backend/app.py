@@ -40,10 +40,8 @@ def generate_story():
         category = data.get("category", "").lower()
 
         if user_scenario:
-            # AI rewrites the user's input into a structured Nah Libs template
             prompt = f"Rewrite the following situation into a funny Mad Libs-style story with missing nouns, verbs, and adjectives:\n\n'{user_scenario}'\n\nReplace key words with placeholders like [Noun], [Verb], and [Adjective]. Keep it exaggerated and in a humorous tone."
         elif category in CATEGORIES:
-            # AI generates a full Mad Libs template from a category
             prompt = f"Write a funny Mad Libs-style story about {CATEGORIES[category]}. Include placeholders for [Noun], [Verb], and [Adjective]."
         else:
             return jsonify({"error": "Invalid request. Provide a scenario or select a category."}), 400
@@ -53,11 +51,17 @@ def generate_story():
             messages=[{"role": "user", "content": prompt}]
         )
 
-        ai_story = response.choices[0].message.content  # ✅ Ensures correct response handling
+        ai_story = response.choices[0].message.content
+
+        # ✅ Limit story length to 2500 characters
+        if len(ai_story) > 2500:
+            ai_story = ai_story[:2500] + "..."  # Truncate and add ellipsis
+
         return jsonify({"story": ai_story})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/regenerate', methods=['POST'])
 def regenerate_story():
