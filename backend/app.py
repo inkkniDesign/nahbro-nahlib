@@ -41,7 +41,7 @@ def generate_story():
 
         if user_scenario:
             # AI rewrites the user's input into a structured Nah Libs template
-            prompt = f"Rewrite the following situation into a funny Mad Libs-style story with missing nouns, verbs, and adjectives:\n\n'{user_scenario}'\n\nInclude placeholders for [Noun], [Verb], and [Adjective]. Keep it exaggerated and in a humorous tone."
+            prompt = f"Rewrite the following situation into a funny Mad Libs-style story with missing nouns, verbs, and adjectives:\n\n'{user_scenario}'\n\nReplace key words with placeholders like [Noun], [Verb], and [Adjective]. Keep it exaggerated and in a humorous tone."
         elif category in CATEGORIES:
             # AI generates a full Mad Libs template from a category
             prompt = f"Write a funny Mad Libs-style story about {CATEGORIES[category]}. Include placeholders for [Noun], [Verb], and [Adjective]."
@@ -53,7 +53,7 @@ def generate_story():
             messages=[{"role": "user", "content": prompt}]
         )
 
-        ai_story = response.choices[0].message.content  # ✅ FIXED LINE
+        ai_story = response.choices[0].message.content  # ✅ Ensures correct response handling
         return jsonify({"story": ai_story})
 
     except Exception as e:
@@ -69,14 +69,14 @@ def regenerate_story():
         if category not in CATEGORIES:
             return jsonify({"error": "Invalid category for regeneration."}), 400
 
-        prompt = f"Generate a different version of a funny Mad Libs-style story about {CATEGORIES[category]}. Make sure it's fresh, unpredictable, and even more exaggerated."
+        prompt = f"Write a fresh, funnier version of a Mad Libs-style story about {CATEGORIES[category]}. Use placeholders for [Noun], [Verb], and [Adjective]."
 
         response = openai.chat.completions.create(
             model="gpt-4",
             messages=[{"role": "user", "content": prompt}]
         )
 
-        new_story = response.choices[0].message.content  # ✅ FIXED LINE
+        new_story = response.choices[0].message.content  # ✅ Ensures correct response handling
         return jsonify({"story": new_story})
 
     except Exception as e:
