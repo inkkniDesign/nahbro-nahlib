@@ -57,9 +57,10 @@ function displayStoryWithInputs(story) {
     }
 
     let formHtml = story;
+    let uniquePlaceholders = [...new Set(placeholders)]; // Ensure each placeholder is unique
     let placeholderCount = {}; // Track occurrences of each placeholder type
 
-    placeholders.forEach((placeholder) => {
+    uniquePlaceholders.forEach((placeholder) => {
         let wordType = placeholder.replace(/\[|\]/g, ''); // Remove brackets
 
         // Ensure each placeholder type gets a unique ID
