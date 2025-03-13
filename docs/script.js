@@ -57,12 +57,16 @@ function displayStoryWithInputs(story) {
     }
 
     let formHtml = story;
-    let uniquePlaceholders = [...new Set(placeholders)]; // Ensure each placeholder is only replaced once
+    let usedPlaceholders = new Set(); // Ensure each placeholder is replaced once
 
-    uniquePlaceholders.forEach((placeholder, index) => {
-        let wordType = placeholder.replace(/\[|\]/g, ''); // Remove brackets
-        let inputField = `<input type="text" class="user-word" data-placeholder="${placeholder}" placeholder="${wordType}" required>`;
-        formHtml = formHtml.replaceAll(placeholder, inputField); // Use replaceAll to fix duplication
+    placeholders.forEach((placeholder, index) => {
+        if (!usedPlaceholders.has(placeholder)) {
+            let wordType = placeholder.replace(/\[|\]/g, ''); // Remove brackets
+            let uniqueInputId = `word${index}`;
+            let inputField = `<input type="text" id="${uniqueInputId}" class="user-word" data-placeholder="${placeholder}" placeholder="${wordType}" required>`;
+            formHtml = formHtml.replace(placeholder, inputField); // Replace only the first occurrence
+            usedPlaceholders.add(placeholder); // Mark placeholder as used
+        }
     });
 
     document.getElementById("output").innerHTML = `
@@ -73,7 +77,6 @@ function displayStoryWithInputs(story) {
     document.getElementById("output").dataset.story = story;
 }
 
-
 function finalizeStory() {
     let inputs = document.querySelectorAll("#story-form input");
     let finalStory = document.getElementById("output").dataset.story;
@@ -81,13 +84,12 @@ function finalizeStory() {
     inputs.forEach(input => {
         let userWord = input.value.trim() || input.placeholder;
         let placeholder = input.dataset.placeholder;
-        finalStory = finalStory.replaceAll(placeholder, `<strong>${userWord}</strong>`);
+        finalStory = finalStory.replaceAll(placeholder, `<strong>${userWord}</strong>`); // Ensure correct replacement
     });
 
     document.getElementById("output").innerHTML = `<p>${finalStory}</p>`;
     document.getElementById("share-buttons").classList.remove("hidden");
 }
-
 
 // Social Sharing
 function shareStory(platform) {
