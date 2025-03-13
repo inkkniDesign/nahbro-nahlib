@@ -48,7 +48,7 @@ document.getElementById("regenerate").addEventListener("click", async function (
 });
 
 function displayStoryWithInputs(story) {
-    let placeholders = story.match(/\[(.*?)\]/g) || []; // Extract placeholders like [Noun], [Verb]
+    let placeholders = story.match(/\[(.*?)\]/g) || []; // Extract placeholders like [Noun], [Verb], etc.
 
     // If no placeholders are found, show the story as-is
     if (placeholders.length === 0) {
@@ -57,16 +57,20 @@ function displayStoryWithInputs(story) {
     }
 
     let formHtml = story;
-    let usedPlaceholders = new Set(); // Ensure each placeholder is replaced once
+    let placeholderCount = {}; // Track occurrences of each placeholder type
 
-    placeholders.forEach((placeholder, index) => {
-        if (!usedPlaceholders.has(placeholder)) {
-            let wordType = placeholder.replace(/\[|\]/g, ''); // Remove brackets
-            let uniqueInputId = `word${index}`;
-            let inputField = `<input type="text" id="${uniqueInputId}" class="user-word" data-placeholder="${placeholder}" placeholder="${wordType}" required>`;
-            formHtml = formHtml.replace(placeholder, inputField); // Replace only the first occurrence
-            usedPlaceholders.add(placeholder); // Mark placeholder as used
+    placeholders.forEach((placeholder) => {
+        let wordType = placeholder.replace(/\[|\]/g, ''); // Remove brackets
+
+        // Ensure each placeholder type gets a unique ID
+        if (!placeholderCount[wordType]) {
+            placeholderCount[wordType] = 0;
         }
+        let uniqueInputId = `${wordType}${placeholderCount[wordType]}`;
+        placeholderCount[wordType]++;
+
+        let inputField = `<input type="text" id="${uniqueInputId}" class="user-word" data-placeholder="${placeholder}" placeholder="${wordType}" required>`;
+        formHtml = formHtml.replace(placeholder, inputField); // Replace only the first occurrence
     });
 
     document.getElementById("output").innerHTML = `
@@ -84,7 +88,7 @@ function finalizeStory() {
     inputs.forEach(input => {
         let userWord = input.value.trim() || input.placeholder;
         let placeholder = input.dataset.placeholder;
-        finalStory = finalStory.replaceAll(placeholder, `<strong>${userWord}</strong>`); // Ensure correct replacement
+        finalStory = finalStory.replace(placeholder, `<strong>${userWord}</strong>`); // Ensure correct replacement
     });
 
     document.getElementById("output").innerHTML = `<p>${finalStory}</p>`;
