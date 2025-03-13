@@ -56,17 +56,20 @@ function displayStoryWithInputs(story) {
         return;
     }
 
-    let modifiedStory = story;
+    let formHtml = story;
 
-    placeholders.forEach((placeholder, index) => {
+    // Use a unique counter to prevent multiple replacements of the same placeholder
+    let counter = 0;
+    placeholders.forEach((placeholder) => {
         let wordType = placeholder.replace(/\[|\]/g, ''); // Remove brackets
-        let inputField = `<input type="text" class="user-word" data-placeholder="${placeholder}" placeholder="${wordType}" required>`;
-        modifiedStory = modifiedStory.replace(placeholder, inputField);
+        let inputField = `<input type="text" class="user-word" id="word${counter}" data-placeholder="${placeholder}" placeholder="${wordType}" required>`;
+        formHtml = formHtml.replace(placeholder, inputField);
+        counter++; // Ensure unique replacements
     });
 
     document.getElementById("output").innerHTML = `
         <p>Fill in the blanks:</p>
-        <div id="story-form">${modifiedStory}</div>
+        <div id="story-form">${formHtml}</div>
         <button onclick="finalizeStory()">Submit Words</button>
     `;
     document.getElementById("output").dataset.story = story;
@@ -78,7 +81,7 @@ function finalizeStory() {
 
     inputs.forEach(input => {
         let userWord = input.value.trim() || input.placeholder;
-        finalStory = finalStory.replace(input.outerHTML, `<strong>${userWord}</strong>`);
+        finalStory = finalStory.replace(input.dataset.placeholder, `<strong>${userWord}</strong>`);
     });
 
     document.getElementById("output").innerHTML = `<p>${finalStory}</p>`;
