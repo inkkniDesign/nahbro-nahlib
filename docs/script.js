@@ -57,14 +57,12 @@ function displayStoryWithInputs(story) {
     }
 
     let formHtml = story;
+    let uniquePlaceholders = [...new Set(placeholders)]; // Ensure each placeholder is only replaced once
 
-    // Use a unique counter to prevent multiple replacements of the same placeholder
-    let counter = 0;
-    placeholders.forEach((placeholder) => {
+    uniquePlaceholders.forEach((placeholder, index) => {
         let wordType = placeholder.replace(/\[|\]/g, ''); // Remove brackets
-        let inputField = `<input type="text" class="user-word" id="word${counter}" data-placeholder="${placeholder}" placeholder="${wordType}" required>`;
-        formHtml = formHtml.replace(placeholder, inputField);
-        counter++; // Ensure unique replacements
+        let inputField = `<input type="text" class="user-word" data-placeholder="${placeholder}" placeholder="${wordType}" required>`;
+        formHtml = formHtml.replaceAll(placeholder, inputField); // Use replaceAll to fix duplication
     });
 
     document.getElementById("output").innerHTML = `
@@ -75,18 +73,21 @@ function displayStoryWithInputs(story) {
     document.getElementById("output").dataset.story = story;
 }
 
+
 function finalizeStory() {
     let inputs = document.querySelectorAll("#story-form input");
     let finalStory = document.getElementById("output").dataset.story;
 
     inputs.forEach(input => {
         let userWord = input.value.trim() || input.placeholder;
-        finalStory = finalStory.replace(input.dataset.placeholder, `<strong>${userWord}</strong>`);
+        let placeholder = input.dataset.placeholder;
+        finalStory = finalStory.replaceAll(placeholder, `<strong>${userWord}</strong>`);
     });
 
     document.getElementById("output").innerHTML = `<p>${finalStory}</p>`;
     document.getElementById("share-buttons").classList.remove("hidden");
 }
+
 
 // Social Sharing
 function shareStory(platform) {
