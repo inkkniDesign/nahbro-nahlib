@@ -48,7 +48,7 @@ document.getElementById("regenerate").addEventListener("click", async function (
 });
 
 function displayStoryWithInputs(story) {
-    let placeholders = story.match(/\[(.*?)\]/g) || []; // Extract placeholders like [Noun], [Verb], etc.
+    let placeholders = story.match(/\[(.*?)\]/g) || []; // Extract placeholders like [Noun], [Verb]
 
     // If no placeholders are found, show the story as-is
     if (placeholders.length === 0) {
@@ -57,20 +57,20 @@ function displayStoryWithInputs(story) {
     }
 
     let formHtml = story;
-    let uniquePlaceholders = [...new Set(placeholders)]; // Ensure each placeholder is unique
-    let placeholderCount = {}; // Track occurrences of each placeholder type
+    let placeholderMap = {}; // Track occurrences of each placeholder
 
-    uniquePlaceholders.forEach((placeholder) => {
+    placeholders.forEach((placeholder) => {
         let wordType = placeholder.replace(/\[|\]/g, ''); // Remove brackets
 
-        // Ensure each placeholder type gets a unique ID
-        if (!placeholderCount[wordType]) {
-            placeholderCount[wordType] = 0;
+        // Ensure each placeholder type gets a unique number
+        if (!placeholderMap[wordType]) {
+            placeholderMap[wordType] = 1;
+        } else {
+            placeholderMap[wordType]++;
         }
-        let uniqueInputId = `${wordType}${placeholderCount[wordType]}`;
-        placeholderCount[wordType]++;
 
-        let inputField = `<input type="text" id="${uniqueInputId}" class="user-word" data-placeholder="${placeholder}" placeholder="${wordType}" required>`;
+        let uniquePlaceholder = `${wordType}${placeholderMap[wordType]}`;
+        let inputField = `<input type="text" id="${uniquePlaceholder}" class="user-word" data-placeholder="${placeholder}" placeholder="${wordType}" required>`;
         formHtml = formHtml.replace(placeholder, inputField); // Replace only the first occurrence
     });
 
