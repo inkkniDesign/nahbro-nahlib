@@ -7,7 +7,6 @@ document.getElementById("generate").addEventListener("click", async function () 
         return;
     }
 
-    // ✅ Fix: If only category is selected, requestData will still be valid
     let requestData = {};
     if (scenario) requestData.scenario = scenario;
     if (category) requestData.category = category;
@@ -70,15 +69,18 @@ document.getElementById("regenerate").addEventListener("click", async function (
 });
 
 function displayStoryWithInputs(story) {
-    let placeholders = story.match(/\[(.*?)\]/g) || []; // Extract placeholders like [Noun], [Verb]
+    let placeholders = story.match(/\[(.*?)\]/g) || []; 
 
     if (placeholders.length === 0) {
         document.getElementById("output").innerHTML = `<p>${story}</p>`;
         return;
     }
 
+    // ✅ Ensure output container is updated correctly
+    document.getElementById("output").innerHTML = `<p>${story}</p>`;
+
     let formHtml = story;
-    let placeholderMap = {}; // Track occurrences of each placeholder type
+    let placeholderMap = {}; 
 
     const exampleHints = {
         "Noun": "(e.g., dog, house, beach, pizza)",
