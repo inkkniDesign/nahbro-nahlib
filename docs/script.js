@@ -11,7 +11,7 @@ document.getElementById("generate").addEventListener("click", async function () 
     if (scenario) requestData.scenario = scenario;
     if (category) requestData.category = category;
 
-    console.log("Generating new story with:", requestData); // ✅ Debug log
+    console.log("Generating new story with:", requestData); 
 
     try {
         let response = await fetch("https://nahbro-nahlib.onrender.com/generate", {
@@ -20,18 +20,19 @@ document.getElementById("generate").addEventListener("click", async function () 
             body: JSON.stringify(requestData)
         });
 
-        console.log("API Response Status:", response.status); // ✅ Debug log
+        console.log("API Response Status:", response.status);
         let result = await response.json();
-        console.log("Generated Story:", result); // ✅ Debug log
+        console.log("Generated Story:", result);
 
         if (result.story) {
             displayStoryWithInputs(result.story);
+            document.getElementById("regenerate").textContent = "New NAH-LIB"; // ✅ Updated Button Text
             document.getElementById("regenerate").classList.remove("hidden");
         } else {
             document.getElementById("output").innerText = "Something went wrong. Try again!";
         }
     } catch (error) {
-        console.error("Error fetching story:", error); // ✅ Debug log
+        console.error("Error fetching story:", error);
         document.getElementById("output").innerText = "Error fetching story. Check console.";
     }
 });
@@ -49,7 +50,7 @@ document.getElementById("regenerate").addEventListener("click", async function (
     if (scenario) requestData.scenario = scenario;
     if (category) requestData.category = category;
 
-    console.log("Generating new AI story with:", requestData); // ✅ Debug log
+    console.log("Generating new AI story with:", requestData);
 
     try {
         let response = await fetch("https://nahbro-nahlib.onrender.com/generate", {
@@ -69,32 +70,29 @@ document.getElementById("regenerate").addEventListener("click", async function (
 });
 
 function displayStoryWithInputs(story) {
-    let placeholders = story.match(/\[(.*?)\]/g) || []; 
+    let placeholders = story.match(/\[(.*?)\]/g) || [];
 
     if (placeholders.length === 0) {
         document.getElementById("output").innerHTML = `<p>${story}</p>`;
         return;
     }
 
-    // ✅ Ensure output container is updated correctly
-    document.getElementById("output").innerHTML = `<p>${story}</p>`;
-
     let formHtml = story;
-    let placeholderMap = {}; 
+    let placeholderMap = {};
 
     const exampleHints = {
-        "Noun": "(e.g., dog, house, beach, pizza)",
-        "Verb": "(e.g., run, jump, swim, laugh)",
-        "Verb-ing": "(e.g., running, jumping, swimming)",
-        "Verb-past": "(e.g., ran, jumped, swam)",
-        "Adjective": "(e.g., happy, blue, gigantic, slimy)",
-        "Plural-Noun": "(e.g., dogs, houses, beaches)",
-        "Proper-Noun": "(e.g., New York, Beyonce, McDonald's)",
-        "Color": "(e.g., red, blue, green)"
+        "Noun": "Example: dog, house, beach, pizza",
+        "Verb": "Example: run, jump, swim, laugh",
+        "Verb-ing": "Example: running, jumping, swimming",
+        "Verb-past": "Example: ran, jumped, swam",
+        "Adjective": "Example: happy, blue, gigantic, slimy",
+        "Plural-Noun": "Example: dogs, houses, beaches",
+        "Proper-Noun": "Example: New York, Beyonce, McDonald's",
+        "Color": "Example: red, blue, green"
     };
 
     placeholders.forEach((placeholder) => {
-        let wordType = placeholder.replace(/\[|\]/g, ''); 
+        let wordType = placeholder.replace(/\[|\]/g, '');
 
         if (!placeholderMap[wordType]) {
             placeholderMap[wordType] = 1;
@@ -103,10 +101,11 @@ function displayStoryWithInputs(story) {
         }
 
         let uniquePlaceholder = `[${wordType}${placeholderMap[wordType]}]`;
-        let inputHint = exampleHints[wordType] || "(e.g., enter a word)";
+        let inputHint = exampleHints[wordType] || "Example: enter a word";
+
         let inputField = `
-            <input type="text" class="user-word" data-placeholder="${uniquePlaceholder}" placeholder="${wordType}" required>
-            <small class="input-hint">${inputHint}</small>
+            <input type="text" class="user-word" data-placeholder="${uniquePlaceholder}" 
+            placeholder="${wordType}" required title="${inputHint}">
         `;
 
         formHtml = formHtml.replace(placeholder, inputField);
@@ -127,7 +126,7 @@ function finalizeStory() {
     inputs.forEach(input => {
         let userWord = input.value.trim() || input.placeholder;
         let placeholder = input.dataset.placeholder;
-        finalStory = finalStory.replaceAll(placeholder, `<strong>${userWord}</strong>`); 
+        finalStory = finalStory.replaceAll(placeholder, `<strong>${userWord}</strong>`);
     });
 
     document.getElementById("output").innerHTML = `<p>${finalStory}</p>`;
