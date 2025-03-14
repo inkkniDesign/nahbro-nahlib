@@ -1,25 +1,23 @@
 document.getElementById("generate").addEventListener("click", async function () {
-    let scenario = document.getElementById("scenario").value;
-    let category = document.getElementById("category").value;
+    let scenario = document.getElementById("scenario").value.trim();
 
-    // Validate input: scenario or category must be provided
-    let requestData = {};
-    if (scenario.trim()) {
-        requestData.scenario = scenario.trim();
-    } else if (category.trim()) {
-        requestData.category = category.trim();
-    } else {
-        alert("Please enter a scenario or select a category.");
+    // Ensure user enters a scenario
+    if (!scenario) {
+        alert("Please enter a scenario.");
         return;
     }
+
+    console.log("Generating new story with scenario:", scenario); // Debug log
 
     let response = await fetch("https://nahbro-nahlib.onrender.com/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestData)
+        body: JSON.stringify({ scenario }) // Only keeping user scenario
     });
 
     let result = await response.json();
+    console.log("Generated story:", result); // Debug log
+
     if (result.story) {
         displayStoryWithInputs(result.story);
         document.getElementById("regenerate").classList.remove("hidden");
@@ -29,19 +27,24 @@ document.getElementById("generate").addEventListener("click", async function () 
 });
 
 document.getElementById("regenerate").addEventListener("click", async function () {
-    let category = document.getElementById("category").value;
-    if (!category.trim()) {
-        alert("Regeneration only works for category-based stories.");
+    let scenario = document.getElementById("scenario").value.trim();
+
+    if (!scenario) {
+        alert("Please enter a scenario.");
         return;
     }
 
-    let response = await fetch("https://nahbro-nahlib.onrender.com/regenerate", {
+    console.log("Creating a completely new story with scenario:", scenario); // Debug log
+
+    let response = await fetch("https://nahbro-nahlib.onrender.com/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ category })
+        body: JSON.stringify({ scenario }) // Only keeping user scenario
     });
 
     let result = await response.json();
+    console.log("New story generated:", result); // Debug log
+
     if (result.story) {
         displayStoryWithInputs(result.story);
     }
@@ -62,7 +65,6 @@ function displayStoryWithInputs(story) {
     placeholders.forEach((placeholder) => {
         let wordType = placeholder.replace(/\[|\]/g, ''); // Remove brackets
 
-        // Ensure each placeholder type gets a unique number
         if (!placeholderCount[wordType]) {
             placeholderCount[wordType] = 1;
         } else {
@@ -72,7 +74,6 @@ function displayStoryWithInputs(story) {
         let uniquePlaceholder = `${wordType}${placeholderCount[wordType]}`;
         let inputField = `<input type="text" id="${uniquePlaceholder}" class="user-word" data-placeholder="${placeholder}" placeholder="${wordType}" required>`;
         
-        // Replace ONLY the first occurrence of each placeholder
         formHtml = formHtml.replace(placeholder, inputField);
     });
 
@@ -91,24 +92,10 @@ function finalizeStory() {
     inputs.forEach(input => {
         let userWord = input.value.trim() || input.placeholder;
         let placeholder = input.dataset.placeholder;
-        finalStory = finalStory.replace(placeholder, `<strong>${userWord}</strong>`); // Ensure correct replacement
+        finalStory = finalStory.replace(placeholder, `<strong>${userWord}</strong>`);
     });
 
     document.getElementById("output").innerHTML = `<p>${finalStory}</p>`;
-    document.getElementById("share-buttons").classList.remove("hidden");
-}
-
-// Social Sharing
-function shareStory(platform) {
-    let story = document.getElementById("output").innerText;
-    let url = "https://nahbro.xyz";
-    let text = encodeURIComponent(story + " #NahBroXYZ");
-
-    if (platform === "twitter") {
-        window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
-    } else if (platform === "facebook") {
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
-    }
 }
 
 // Clipboard Copy
