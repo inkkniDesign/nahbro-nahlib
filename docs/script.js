@@ -57,21 +57,23 @@ function displayStoryWithInputs(story) {
     }
 
     let formHtml = story;
-    let placeholderMap = {}; // Track occurrences of each placeholder
+    let placeholderCount = {}; // Track occurrences of each placeholder type
 
     placeholders.forEach((placeholder) => {
         let wordType = placeholder.replace(/\[|\]/g, ''); // Remove brackets
 
         // Ensure each placeholder type gets a unique number
-        if (!placeholderMap[wordType]) {
-            placeholderMap[wordType] = 1;
+        if (!placeholderCount[wordType]) {
+            placeholderCount[wordType] = 1;
         } else {
-            placeholderMap[wordType]++;
+            placeholderCount[wordType]++;
         }
 
-        let uniquePlaceholder = `${wordType}${placeholderMap[wordType]}`;
+        let uniquePlaceholder = `${wordType}${placeholderCount[wordType]}`;
         let inputField = `<input type="text" id="${uniquePlaceholder}" class="user-word" data-placeholder="${placeholder}" placeholder="${wordType}" required>`;
-        formHtml = formHtml.replace(placeholder, inputField); // Replace only the first occurrence
+        
+        // Replace ONLY the first occurrence in the text
+        formHtml = formHtml.replace(placeholder, inputField);
     });
 
     document.getElementById("output").innerHTML = `
@@ -89,7 +91,7 @@ function finalizeStory() {
     inputs.forEach(input => {
         let userWord = input.value.trim() || input.placeholder;
         let placeholder = input.dataset.placeholder;
-        finalStory = finalStory.replace(placeholder, `<strong>${userWord}</strong>`); // Ensure correct replacement
+        finalStory = finalStory.replaceAll(placeholder, `<strong>${userWord}</strong>`); // Ensure correct replacement
     });
 
     document.getElementById("output").innerHTML = `<p>${finalStory}</p>`;
