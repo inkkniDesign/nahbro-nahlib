@@ -2,13 +2,15 @@ document.getElementById("generate").addEventListener("click", async function () 
     let scenario = document.getElementById("scenario").value.trim();
     let category = document.getElementById("category").value.trim();
 
-    // ✅ Allow category to work independently of scenario
     if (!scenario && !category) {
         alert("Please enter a scenario OR select a category.");
         return;
     }
 
-    let requestData = scenario ? { scenario } : { category };
+    // ✅ Fix: If only category is selected, requestData will still be valid
+    let requestData = {};
+    if (scenario) requestData.scenario = scenario;
+    if (category) requestData.category = category;
 
     console.log("Generating new story with:", requestData); // ✅ Debug log
 
@@ -39,13 +41,14 @@ document.getElementById("regenerate").addEventListener("click", async function (
     let scenario = document.getElementById("scenario").value.trim();
     let category = document.getElementById("category").value.trim();
 
-    // ✅ Allow category to work independently
     if (!scenario && !category) {
         alert("Please enter a scenario OR select a category.");
         return;
     }
 
-    let requestData = scenario ? { scenario } : { category };
+    let requestData = {};
+    if (scenario) requestData.scenario = scenario;
+    if (category) requestData.category = category;
 
     console.log("Generating new AI story with:", requestData); // ✅ Debug log
 
@@ -69,7 +72,6 @@ document.getElementById("regenerate").addEventListener("click", async function (
 function displayStoryWithInputs(story) {
     let placeholders = story.match(/\[(.*?)\]/g) || []; // Extract placeholders like [Noun], [Verb]
 
-    // If no placeholders are found, show the story as-is
     if (placeholders.length === 0) {
         document.getElementById("output").innerHTML = `<p>${story}</p>`;
         return;
@@ -78,7 +80,6 @@ function displayStoryWithInputs(story) {
     let formHtml = story;
     let placeholderMap = {}; // Track occurrences of each placeholder type
 
-    // Define example hints for different word types
     const exampleHints = {
         "Noun": "(e.g., dog, house, beach, pizza)",
         "Verb": "(e.g., run, jump, swim, laugh)",
@@ -91,7 +92,7 @@ function displayStoryWithInputs(story) {
     };
 
     placeholders.forEach((placeholder) => {
-        let wordType = placeholder.replace(/\[|\]/g, ''); // Remove brackets
+        let wordType = placeholder.replace(/\[|\]/g, ''); 
 
         if (!placeholderMap[wordType]) {
             placeholderMap[wordType] = 1;
@@ -106,7 +107,6 @@ function displayStoryWithInputs(story) {
             <small class="input-hint">${inputHint}</small>
         `;
 
-        // ✅ Fix: Replace only the FIRST occurrence of this exact placeholder
         formHtml = formHtml.replace(placeholder, inputField);
     });
 
@@ -125,13 +125,12 @@ function finalizeStory() {
     inputs.forEach(input => {
         let userWord = input.value.trim() || input.placeholder;
         let placeholder = input.dataset.placeholder;
-        finalStory = finalStory.replaceAll(placeholder, `<strong>${userWord}</strong>`); // ✅ Fix: Ensures correct replacement
+        finalStory = finalStory.replaceAll(placeholder, `<strong>${userWord}</strong>`); 
     });
 
     document.getElementById("output").innerHTML = `<p>${finalStory}</p>`;
 }
 
-// Clipboard Copy
 function copyToClipboard() {
     let text = document.getElementById("output").innerText;
     navigator.clipboard.writeText(text).then(() => {
