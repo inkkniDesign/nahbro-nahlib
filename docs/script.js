@@ -72,7 +72,7 @@ function displayStoryWithInputs(story) {
         let uniquePlaceholder = `${wordType}${placeholderCount[wordType]}`;
         let inputField = `<input type="text" id="${uniquePlaceholder}" class="user-word" data-placeholder="${placeholder}" placeholder="${wordType}" required>`;
         
-        // Replace ONLY the first occurrence in the text
+        // Replace ONLY the first occurrence of each placeholder
         formHtml = formHtml.replace(placeholder, inputField);
     });
 
@@ -91,7 +91,7 @@ function finalizeStory() {
     inputs.forEach(input => {
         let userWord = input.value.trim() || input.placeholder;
         let placeholder = input.dataset.placeholder;
-        finalStory = finalStory.replaceAll(placeholder, `<strong>${userWord}</strong>`); // Ensure correct replacement
+        finalStory = finalStory.replace(placeholder, `<strong>${userWord}</strong>`); // Ensure correct replacement
     });
 
     document.getElementById("output").innerHTML = `<p>${finalStory}</p>`;
