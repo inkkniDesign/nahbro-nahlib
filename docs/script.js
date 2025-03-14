@@ -26,7 +26,7 @@ document.getElementById("generate").addEventListener("click", async function () 
 
         if (result.story) {
             displayStoryWithInputs(result.story);
-            document.getElementById("regenerate").textContent = "New NAH-LIB"; // ✅ Updated Button Text
+            document.getElementById("regenerate").textContent = "New NAH-LIB"; 
             document.getElementById("regenerate").classList.remove("hidden");
         } else {
             document.getElementById("output").innerText = "Something went wrong. Try again!";
