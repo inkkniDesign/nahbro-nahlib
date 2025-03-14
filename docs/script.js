@@ -74,7 +74,7 @@ function displayStoryWithInputs(story) {
         let uniquePlaceholder = `${wordType}${placeholderCount[wordType]}`;
         let inputField = `<input type="text" id="${uniquePlaceholder}" class="user-word" data-placeholder="${placeholder}" placeholder="${wordType}" required>`;
         
-        formHtml = formHtml.replace(placeholder, inputField);
+        formHtml = formHtml.replaceAll(placeholder, inputField); // ✅ Fix: Replace all instances
     });
 
     document.getElementById("output").innerHTML = `
@@ -82,7 +82,7 @@ function displayStoryWithInputs(story) {
         <div id="story-form">${formHtml}</div>
         <button onclick="finalizeStory()">Submit Words</button>
     `;
-    document.getElementById("output").dataset.story = story;
+    document.getElementById("output").dataset.story = story; // ✅ Fix: Store original story
 }
 
 function finalizeStory() {
@@ -92,7 +92,7 @@ function finalizeStory() {
     inputs.forEach(input => {
         let userWord = input.value.trim() || input.placeholder;
         let placeholder = input.dataset.placeholder;
-        finalStory = finalStory.replace(placeholder, `<strong>${userWord}</strong>`);
+        finalStory = finalStory.replaceAll(placeholder, `<strong>${userWord}</strong>`); // ✅ Fix: Replace all placeholders
     });
 
     document.getElementById("output").innerHTML = `<p>${finalStory}</p>`;
