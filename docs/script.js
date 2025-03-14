@@ -101,7 +101,7 @@ function displayStoryWithInputs(story) {
         }
 
         let uniquePlaceholder = `[${wordType}${placeholderMap[wordType]}]`;
-        let inputHint = exampleHints[wordType] || "Example: enter a word";
+        let inputHint = exampleHints[wordType] ? exampleHints[wordType] : `Example: ${wordType.toLowerCase()}`;
 
         let inputField = `
             <input type="text" class="user-word" data-placeholder="${uniquePlaceholder}" 
