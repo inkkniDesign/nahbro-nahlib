@@ -1,52 +1,68 @@
 document.getElementById("generate").addEventListener("click", async function () {
     let scenario = document.getElementById("scenario").value.trim();
+    let category = document.getElementById("category").value.trim();
 
-    // Ensure user enters a scenario
-    if (!scenario) {
-        alert("Please enter a scenario.");
+    // ✅ Allow category to work independently of scenario
+    if (!scenario && !category) {
+        alert("Please enter a scenario OR select a category.");
         return;
     }
 
-    console.log("Generating new story with scenario:", scenario); // Debug log
+    let requestData = scenario ? { scenario } : { category };
 
-    let response = await fetch("https://nahbro-nahlib.onrender.com/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ scenario }) // Only keeping user scenario
-    });
+    console.log("Generating new story with:", requestData); // ✅ Debug log
 
-    let result = await response.json();
-    console.log("Generated story:", result); // Debug log
+    try {
+        let response = await fetch("https://nahbro-nahlib.onrender.com/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestData)
+        });
 
-    if (result.story) {
-        displayStoryWithInputs(result.story);
-        document.getElementById("regenerate").classList.remove("hidden");
-    } else {
-        document.getElementById("output").innerText = "Something went wrong. Try again!";
+        console.log("API Response Status:", response.status); // ✅ Debug log
+        let result = await response.json();
+        console.log("Generated Story:", result); // ✅ Debug log
+
+        if (result.story) {
+            displayStoryWithInputs(result.story);
+            document.getElementById("regenerate").classList.remove("hidden");
+        } else {
+            document.getElementById("output").innerText = "Something went wrong. Try again!";
+        }
+    } catch (error) {
+        console.error("Error fetching story:", error); // ✅ Debug log
+        document.getElementById("output").innerText = "Error fetching story. Check console.";
     }
 });
 
 document.getElementById("regenerate").addEventListener("click", async function () {
     let scenario = document.getElementById("scenario").value.trim();
+    let category = document.getElementById("category").value.trim();
 
-    if (!scenario) {
-        alert("Please enter a scenario.");
+    // ✅ Allow category to work independently
+    if (!scenario && !category) {
+        alert("Please enter a scenario OR select a category.");
         return;
     }
 
-    console.log("Creating a completely new story with scenario:", scenario); // Debug log
+    let requestData = scenario ? { scenario } : { category };
 
-    let response = await fetch("https://nahbro-nahlib.onrender.com/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ scenario }) // Only keeping user scenario
-    });
+    console.log("Generating new AI story with:", requestData); // ✅ Debug log
 
-    let result = await response.json();
-    console.log("New story generated:", result); // Debug log
+    try {
+        let response = await fetch("https://nahbro-nahlib.onrender.com/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestData)
+        });
 
-    if (result.story) {
-        displayStoryWithInputs(result.story);
+        let result = await response.json();
+        if (result.story) {
+            displayStoryWithInputs(result.story);
+        }
+    } catch (error) {
+        console.error("Error generating new AI story:", error);
+        document.getElementById("output").innerText = "Error fetching new story.";
     }
 });
 
