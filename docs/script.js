@@ -126,7 +126,7 @@ function finalizeStory() {
     inputs.forEach(input => {
         let userWord = input.value.trim() || input.placeholder;
         let placeholder = input.dataset.placeholder;
-        finalStory = finalStory.replaceAll(placeholder, `<strong>${userWord}</strong>`);
+        finalStory = finalStory.split(placeholder).join(`<strong>${userWord}</strong>`); 
     });
 
     document.getElementById("output").innerHTML = `<p>${finalStory}</p>`;
