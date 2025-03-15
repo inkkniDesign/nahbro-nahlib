@@ -88,7 +88,11 @@ function displayStoryWithInputs(story) {
         "Adjective": "Example: happy, blue, gigantic, slimy",
         "Plural-Noun": "Example: dogs, houses, beaches",
         "Proper-Noun": "Example: New York, Beyonce, McDonald's",
-        "Color": "Example: red, blue, green"
+        "Color": "Example: red, blue, green",
+        "Family Member": "Example: mom, dad, sister, uncle",
+        "Time of Day": "Example: morning, afternoon, evening",
+        "Item": "Example: book, phone, wallet",
+        "Body Part": "Example: arm, leg, nose"
     };
 
     placeholders.forEach((placeholder) => {
@@ -126,6 +130,8 @@ function finalizeStory() {
     inputs.forEach(input => {
         let userWord = input.value.trim() || input.placeholder;
         let placeholder = input.dataset.placeholder;
+
+        // ✅ Fix: Ensures multi-word placeholders are correctly replaced
         finalStory = finalStory.split(placeholder).join(`<strong>${userWord}</strong>`); 
     });
 
